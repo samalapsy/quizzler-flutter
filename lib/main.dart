@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/quiz_brain.dart';
+
+QuizBrain quizBrain = new QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -25,6 +28,24 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Icon> schoolKeeper = [];
+
+  void keep(bool status) {
+    if (quizBrain.getAnswer()) {
+      schoolKeeper.add(Icon(
+        Icons.check,
+        color: Colors.green,
+      ));
+    } else {
+      schoolKeeper.add(Icon(
+        Icons.close,
+        color: Colors.red,
+      ));
+    }
+
+    setState(() => quizBrain.nextQuestion());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +58,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -61,7 +82,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked true.
+                keep(true);
               },
             ),
           ),
@@ -79,12 +100,17 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked false.
+                keep(false);
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        Row(
+          children: schoolKeeper,
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
       ],
     );
   }
