@@ -30,9 +30,12 @@ class QuizBrain {
         true),
   ];
 
+  void resetQuestion() => _questionNumber = 0;
   bool getAnswer() => _qBank[_questionNumber].answer;
 
   String getQuestionText() => _qBank[_questionNumber].question;
+
+  bool isLastQuestion() => _qBank.length - 1 == _questionNumber ? true : false;
 
   nextQuestion() =>
       _questionNumber < _qBank.length - 1 ? _questionNumber++ : null;

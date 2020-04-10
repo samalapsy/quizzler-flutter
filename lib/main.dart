@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:quizzler/quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
-QuizBrain quizBrain = new QuizBrain();
+QuizBrain quizBrain = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -30,20 +31,44 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> schoolKeeper = [];
 
-  void keep(bool status) {
-    if (quizBrain.getAnswer()) {
-      schoolKeeper.add(Icon(
-        Icons.check,
-        color: Colors.green,
-      ));
-    } else {
-      schoolKeeper.add(Icon(
-        Icons.close,
-        color: Colors.red,
-      ));
-    }
-
-    setState(() => quizBrain.nextQuestion());
+  void keep(bool answer) {
+    setState(() {
+      if (quizBrain.isLastQuestion()) {
+        quizBrain.resetQuestion();
+        schoolKeeper = [];
+        Alert(
+          context: context,
+          type: AlertType.info,
+          title: "Completed",
+          desc: "You have reached the end of the card.",
+          buttons: [
+            DialogButton(
+              child: Text(
+                "OK",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              color: Colors.blue,
+            ),
+          ],
+        ).show();
+      } else {
+        if (answer == quizBrain.getAnswer()) {
+          schoolKeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+        } else {
+          schoolKeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+        }
+        quizBrain.nextQuestion();
+      }
+    });
   }
 
   @override
@@ -105,8 +130,10 @@ class _QuizPageState extends State<QuizPage> {
             ),
           ),
         ),
-        Row(
-          children: schoolKeeper,
+        Expanded(
+          child: Row(
+            children: schoolKeeper,
+          ),
         ),
         SizedBox(
           height: 20.0,
@@ -115,9 +142,3 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 }
-
-/*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
-question2: 'Approximately one quarter of human bones are in the feet.', true,
-question3: 'A slug\'s blood is green.', true,
-*/
